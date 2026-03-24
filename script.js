@@ -56,16 +56,12 @@ function placeOrder(table = "Table 1") {
 
   const order = {
     table: table,
-    items: [...cart],
+    items: cart,
     status: "New",
     time: new Date().toLocaleTimeString()
   };
 
-  let orders = JSON.parse(localStorage.getItem("orders")) || [];
-
-  orders.push(order);
-
-  localStorage.setItem("orders", JSON.stringify(orders));
+  push(ref(db, "orders"), order);
 
   alert("Order sent to kitchen!");
 
@@ -147,6 +143,27 @@ function playBell() {
   audio.play();
 }
 
+function loadOrdersRealtime() {
+  const container = document.getElementById("orders");
+
+  onValue(ref(db, "orders"), (snapshot) => {
+    const data = snapshot.val();
+
+    container.innerHTML = "";
+
+    for (let id in data) {
+      const order = data[id];
+
+      container.innerHTML += `
+        <div>
+          <h2>${order.table}</h2>
+          <p>${order.items.map(i => i.name).join(", ")}</p>
+          <p>Status: ${order.status}</p>
+        </div>
+      `;
+    }
+  });
+}
 // =======================
 // AUTO REFRESH SYSTEM
 // =======================
