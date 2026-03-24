@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Urban Tadka — Staff Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:        #0a0a0a;
+    --surface:   #111111;
+    --surface2:  #191919;
+    --border:    #242424;
+    --accent:    #f97316;
+    --accent2:   #fb923c;
+    --gold:      #fbbf24;
+    --text:      #f5f5f5;
+    --muted:     #777;
+    --success:   #22c55e;
+    --danger:    #ef4444;
+    --sidebar-w: 220px;
+    --radius:    14px;
+    --transition: .2s ease;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse 80% 60% at 50% 30%, #1a0e00 0%, #0a0a0a 70%);
+    z-index: 999;
+  }
+  .login-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+    padding: 44px 40px; width: 360px; text-align: center;
+    box-shadow: 0 40px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(249,115,22,.08);
+  }
+  .login-card .brand { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: .04em; color: var(--accent); margin-bottom: 6px; }
+  .login-card .sub { color: var(--muted); font-size: 13px; margin-bottom: 32px; }
+  .login-card input {
+    width: 100%; padding: 12px 16px; border-radius: 10px;
+    border: 1px solid var(--border); background: var(--surface2);
+    color: var(--text); font-size: 14px; margin-bottom: 14px;
+    transition: border-color var(--transition); outline: none;
+  }
+  .login-card input:focus { border-color: var(--accent); }
+  .login-card .demo { color: var(--muted); font-size: 12px; margin-bottom: 20px; }
+  .btn-primary {
+    width: 100%; padding: 13px; border-radius: 10px; border: none;
+    background: linear-gradient(135deg, var(--accent), #c2410c);
+    color: #fff; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+    cursor: pointer; letter-spacing: .03em;
+    transition: opacity var(--transition), transform var(--transition);
+  }
+  .btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+  .login-card .back-link { color: var(--muted); font-size: 12px; margin-top: 18px; display: block; text-decoration: none; }
+  .login-card .back-link:hover { color: var(--accent); }
+
+  /* ── APP SHELL ── */
+  #app { display: none; height: 100vh; flex-direction: row; }
+  #app.visible { display: flex; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w); flex-shrink: 0;
+    background: var(--surface); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; padding: 0;
+    height: 100vh; overflow: hidden;
+  }
+  .sidebar-logo {
+    padding: 24px 22px 20px; border-bottom: 1px solid var(--border);
+    font-family: 'Syne', sans-serif;
+  }
+  .sidebar-logo .name { font-size: 17px; font-weight: 800; color: var(--accent); letter-spacing: .03em; }
+  .sidebar-logo .role { font-size: 11px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin-top: 2px; }
+  .sidebar-nav { padding: 16px 12px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px; padding: 11px 14px;
+    border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 500;
+    color: var(--muted); transition: all var(--transition); border: 1px solid transparent;
+    user-select: none;
+  }
+  .nav-item:hover { color: var(--text); background: var(--surface2); }
+  .nav-item.active { color: var(--accent); background: rgba(249,115,22,.1); border-color: rgba(249,115,22,.15); }
+  .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+  .sidebar-footer {
+    padding: 16px 12px; border-top: 1px solid var(--border);
+  }
+  .logout-btn {
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+    border-radius: 10px; cursor: pointer; font-size: 13px; color: var(--muted);
+    transition: all var(--transition); border: none; background: transparent; width: 100%;
+  }
+  .logout-btn:hover { color: var(--danger); background: rgba(239,68,68,.08); }
+
+  /* ── MAIN ── */
+  .main { flex: 1; overflow-y: auto; background: var(--bg); display: flex; flex-direction: column; min-width: 0; }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    padding: 20px 28px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg); flex-shrink: 0; gap: 16px;
+  }
+  .topbar-left h1 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; }
+  .topbar-left p { color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .stat-chips { display: flex; gap: 12px; flex-wrap: wrap; }
+  .stat-chip {
+    display: flex; align-items: center; gap: 8px; padding: 8px 16px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 50px;
+    font-size: 13px;
+  }
+  .stat-chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .stat-chip .dot.orange { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+  .stat-chip .dot.green  { background: var(--success); box-shadow: 0 0 6px var(--success); }
+  .stat-chip strong { color: var(--text); }
+  .stat-chip span   { color: var(--muted); }
+
+  /* ── CONTENT AREA ── */
+  .content { padding: 24px 28px; flex: 1; }
+
+  /* ── SECTION HEADER ── */
+  .section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .section-hdr h2 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; }
+  .section-hdr .badge {
+    padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 600;
+    background: rgba(249,115,22,.12); color: var(--accent); border: 1px solid rgba(249,115,22,.2);
+  }
+
+  /* ── TABLES GRID ── */
+  .tables-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+  .table-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 16px; cursor: pointer; transition: all .18s ease;
+    display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden;
+  }
+  .table-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--border); transition: background .18s;
+  }
+  .table-card.occupied::before { background: var(--accent); }
+  .table-card.free::before    { background: var(--success); }
+  .table-card:hover { transform: translateY(-3px); border-color: #333; box-shadow: 0 12px 32px rgba(0,0,0,.4); }
+  .table-card.occupied:hover { border-color: rgba(249,115,22,.3); }
+  .table-card .t-num { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; }
+  .table-card .t-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; }
+  .table-card .t-status {
+    display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600;
+    padding: 4px 10px; border-radius: 50px; width: fit-content;
+  }
+  .t-status.occupied { background: rgba(249,115,22,.12); color: var(--accent); }
+  .t-status.free     { background: rgba(34,197,94,.1);   color: var(--success); }
+  .t-status .sdot    { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .table-card .t-info { font-size: 12px; color: var(--muted); }
+
+  /* ── ORDER PANEL ── */
+  .order-panel { display: grid; grid-template-columns: 1fr 320px; gap: 20px; height: calc(100vh - 130px); }
+  @media (max-width: 900px) { .order-panel { grid-template-columns: 1fr; height: auto; } }
+
+  /* menu area */
+  .menu-area { overflow-y: auto; padding-right: 4px; }
+  .menu-area::-webkit-scrollbar { width: 4px; }
+  .menu-area::-webkit-scrollbar-track { background: transparent; }
+  .menu-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .category-label {
+    font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700;
+    color: var(--accent); letter-spacing: .12em; text-transform: uppercase;
+    padding: 18px 0 10px; border-bottom: 1px solid var(--border); margin-bottom: 14px;
+  }
+  .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 6px; }
+  .menu-item-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px; cursor: pointer; transition: all .18s ease; position: relative; overflow: hidden;
+  }
+  .menu-item-card:hover { border-color: rgba(249,115,22,.3); transform: translateY(-2px); }
+  .menu-item-card .item-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .menu-item-card .item-desc { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.4; }
+  .menu-item-card .item-footer { display: flex; align-items: center; justify-content: space-between; }
+  .menu-item-card .item-price { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; color: var(--accent); }
+  .qty-controls { display: flex; align-items: center; gap: 6px; }
+  .qty-btn {
+    width: 26px; height: 26px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface2); color: var(--text); font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all var(--transition);
+    line-height: 1;
+  }
+  .qty-btn:hover { background: var(--accent); border-color: var(--accent); }
+  .qty-num { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; min-width: 18px; text-align: center; }
+  .veg-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; flex-shrink: 0; }
+  .veg-dot.veg  { background: var(--success); }
+  .veg-dot.nveg { background: var(--danger); }
+
+  /* cart */
+  .cart-panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .cart-header { padding: 18px 20px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+  .cart-header h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+  .cart-header .cart-table { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .cart-body { flex: 1; overflow-y: auto; padding: 14px 20px; }
+  .cart-body::-webkit-scrollbar { width: 3px; }
+  .cart-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  .cart-empty { color: var(--muted); font-size: 13px; text-align: center; padding: 32px 0; }
+  .cart-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+  .cart-item:last-child { border-bottom: none; }
+  .cart-item .ci-name { flex: 1; font-size: 13px; font-weight: 500; }
+  .cart-item .ci-qty { font-size: 12px; color: var(--muted); }
+  .cart-item .ci-price { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--accent); }
+  .cart-item .ci-remove { color: var(--muted); cursor: pointer; font-size: 14px; transition: color var(--transition); padding: 2px 4px; }
+  .cart-item .ci-remove:hover { color: var(--danger); }
+  .cart-footer { padding: 16px 20px; border-top: 1px solid var(--border); flex-shrink: 0; }
+  .bill-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .bill-row.total { color: var(--text); font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; padding-top: 10px; border-top: 1px solid var(--border); margin-top: 4px; }
+  .bill-row.total span:last-child { color: var(--accent); }
+  .place-order-btn {
+    width: 100%; margin-top: 16px; padding: 14px; border-radius: 12px; border: none;
+    background: linear-gradient(135deg, var(--accent) 0%, #c2410c 100%);
+    color: #fff; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 800;
+    cursor: pointer; letter-spacing: .04em;
+    transition: opacity var(--transition), transform var(--transition);
+    box-shadow: 0 8px 24px rgba(249,115,22,.3);
+  }
+  .place-order-btn:hover { opacity: .9; transform: translateY(-2px); }
+  .place-order-btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+
+  /* table back button */
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px;
+    border-radius: 8px; background: var(--surface); border: 1px solid var(--border);
+    color: var(--muted); font-size: 13px; cursor: pointer; transition: all var(--transition);
+    margin-bottom: 20px;
+  }
+  .back-btn:hover { color: var(--text); border-color: #333; }
+
+  /* toast */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--success); color: #fff; padding: 12px 24px; border-radius: 50px;
+    font-size: 14px; font-weight: 600; opacity: 0; pointer-events: none;
+    transition: all .3s ease; z-index: 9999; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* page transitions */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* scrollbar global */
+  .main::-webkit-scrollbar { width: 5px; }
+  .main::-webkit-scrollbar-track { background: transparent; }
+  .main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* responsive */
+  @media (max-width: 640px) {
+    :root { --sidebar-w: 60px; }
+    .nav-item span, .sidebar-logo .name, .sidebar-logo .role, .logout-btn span { display: none; }
+    .nav-item { justify-content: center; padding: 12px; }
+    .topbar { padding: 14px 16px; flex-wrap: wrap; }
+    .content { padding: 16px; }
+    .tables-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="brand">🍽️ Urban Tadka</div>
+    <div class="sub">Waiter Access — Staff Panel</div>
+    <input type="text" id="uname" placeholder="Username" value="waiter"/>
+    <input type="password" id="upass" placeholder="Password" value="tadka123"/>
+    <div class="demo">Demo: waiter / tadka123</div>
+    <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+    <a href="index.html" class="back-link">← Back to main site</a>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="name">Urban Tadka</div>
+      <div class="role">Waiter Panel</div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" id="nav-tables" onclick="showView('tables')">
+        <span class="nav-icon">⊞</span><span>Floor View</span>
+      </div>
+      <div class="nav-item" id="nav-order" onclick="showView('order')" style="display:none">
+        <span class="nav-icon">🛒</span><span>New Order</span>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">
+        <span>⏻</span><span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1 id="topbar-title">Welcome Back 👋</h1>
+        <p id="topbar-sub">Urban Tadka — Staff Dashboard</p>
+      </div>
+      <div class="stat-chips">
+        <div class="stat-chip"><div class="dot orange"></div><strong id="chip-active">0</strong><span>Active Tables</span></div>
+        <div class="stat-chip"><div class="dot green"></div><strong id="chip-orders">0</strong><span>Today's Orders</span></div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- TABLES VIEW -->
+      <div class="view active" id="view-tables">
+        <div class="section-hdr">
+          <h2>Floor View</h2>
+          <span class="badge" id="table-badge">12 Tables</span>
+        </div>
+        <div class="tables-grid" id="tables-grid"></div>
+      </div>
+
+      <!-- ORDER VIEW -->
+      <div class="view" id="view-order">
+        <button class="back-btn" onclick="showView('tables')">← Tables</button>
+        <div class="order-panel">
+          <div class="menu-area" id="menu-area"></div>
+          <div class="cart-panel">
+            <div class="cart-header">
+              <h3>Bill Summary</h3>
+              <div class="cart-table" id="cart-table-label">Table —</div>
+            </div>
+            <div class="cart-body" id="cart-body">
+              <div class="cart-empty">No items added yet</div>
+            </div>
+            <div class="cart-footer">
+              <div class="bill-row"><span>Subtotal</span><span id="subtotal">₹0</span></div>
+              <div class="bill-row"><span>GST (18%)</span><span id="gst-amt">₹0</span></div>
+              <div class="bill-row total"><span>Grand Total</span><span id="grand-total">₹0</span></div>
+              <button class="place-order-btn" id="place-btn" onclick="placeOrder()">Place Order →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+const TABLES = [
+  { id:1, seats:4, status:'free' }, { id:2, seats:2, status:'occupied', items:2, amount:480 },
+  { id:3, seats:6, status:'free' }, { id:4, seats:4, status:'occupied', items:5, amount:1250 },
+  { id:5, seats:2, status:'free' }, { id:6, seats:8, status:'free' },
+  { id:7, seats:4, status:'occupied', items:3, amount:720 }, { id:8, seats:4, status:'free' },
+  { id:9, seats:2, status:'free' }, { id:10, seats:6, status:'occupied', items:1, amount:290 },
+  { id:11, seats:4, status:'free' }, { id:12, seats:2, status:'free' },
+];
+
+const MENU = {
+  "Starters": [
+    { id:'s1', name:'Paneer Tikka',     desc:'Smoky cottage cheese in masala', price:280, veg:true  },
+    { id:'s2', name:'Chicken Malai',    desc:'Tender chunks, creamy marinade',  price:340, veg:false },
+    { id:'s3', name:'Veg Spring Roll',  desc:'Crispy golden rolls',             price:180, veg:true  },
+    { id:'s4', name:'Seekh Kebab',      desc:'Minced lamb, aromatic spices',    price:360, veg:false },
+  ],
+  "Main Course": [
+    { id:'m1', name:'Dal Makhani',       desc:'Slow-cooked black lentils',       price:260, veg:true  },
+    { id:'m2', name:'Butter Chicken',    desc:'Classic tomato-cream curry',      price:380, veg:false },
+    { id:'m3', name:'Palak Paneer',      desc:'Cottage cheese in spinach gravy', price:290, veg:true  },
+    { id:'m4', name:'Mutton Rogan Josh', desc:'Kashmiri braised lamb',           price:480, veg:false },
+    { id:'m5', name:'Veg Biryani',       desc:'Fragrant basmati, saffron',       price:320, veg:true  },
+  ],
+  "Breads": [
+    { id:'b1', name:'Butter Naan',   desc:'Soft leavened bread, butter',   price:60,  veg:true },
+    { id:'b2', name:'Garlic Naan',   desc:'Garlic & herb topped naan',     price:80,  veg:true },
+    { id:'b3', name:'Laccha Paratha',desc:'Flaky whole-wheat layered',     price:70,  veg:true },
+  ],
+  "Beverages": [
+    { id:'v1', name:'Mango Lassi',   desc:'Fresh mango, thick yogurt',     price:120, veg:true },
+    { id:'v2', name:'Masala Chai',   desc:'Spiced Indian tea',             price:60,  veg:true },
+    { id:'v3', name:'Fresh Lime',    desc:'Lime soda or water',            price:80,  veg:true },
+  ],
+};
+
+let cart = {};
+let selectedTable = null;
+let todayOrders = 4;
+
+// ── LOGIN ──
+function doLogin() {
+  const u = document.getElementById('uname').value;
+  const p = document.getElementById('upass').value;
+  if (u === 'waiter' && p === 'tadka123') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    renderTables();
+    updateChips();
+  } else {
+    showToast('Invalid credentials', true);
+  }
+}
+function doLogout() {
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('login-screen').style.display = 'flex';
+}
+
+// ── CHIPS ──
+function updateChips() {
+  const active = TABLES.filter(t => t.status === 'occupied').length;
+  document.getElementById('chip-active').textContent = active;
+  document.getElementById('chip-orders').textContent = todayOrders;
+  document.getElementById('table-badge').textContent = TABLES.length + ' Tables';
+}
+
+// ── VIEWS ──
+function showView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('nav-' + v)?.classList.add('active');
+  const titles = { tables: 'Welcome Back 👋', order: 'New Order' };
+  const subs   = { tables: 'Urban Tadka — Staff Dashboard', order: selectedTable ? 'Table ' + selectedTable : '' };
+  document.getElementById('topbar-title').textContent = titles[v] || '';
+  document.getElementById('topbar-sub').textContent   = subs[v] || '';
+  if (v === 'order') document.getElementById('nav-order').style.display = 'flex';
+  if (v === 'tables') { document.getElementById('nav-order').style.display = 'none'; selectedTable = null; cart = {}; }
+}
+
+// ── TABLES ──
+function renderTables() {
+  const grid = document.getElementById('tables-grid');
+  grid.innerHTML = TABLES.map(t => `
+    <div class="table-card ${t.status}" onclick="openTable(${t.id})">
+      <div>
+        <div class="t-label">Table</div>
+        <div class="t-num">${String(t.id).padStart(2,'0')}</div>
+      </div>
+      <div class="t-status ${t.status}">
+        <div class="sdot"></div>
+        ${t.status === 'occupied' ? 'Active' : 'Free'}
+      </div>
+      <div class="t-info">${t.seats} Seats${t.status === 'occupied' ? ` · ₹${t.amount}` : ''}</div>
+    </div>
+  `).join('');
+}
+
+function openTable(id) {
+  selectedTable = id;
+  cart = {};
+  document.getElementById('nav-order').style.display = 'flex';
+  document.getElementById('cart-table-label').textContent = 'Table ' + String(id).padStart(2,'0');
+  renderMenu();
+  renderCart();
+  showView('order');
+}
+
+// ── MENU ──
+function renderMenu() {
+  const area = document.getElementById('menu-area');
+  area.innerHTML = Object.entries(MENU).map(([cat, items]) => `
+    <div class="category-label">${cat}</div>
+    <div class="menu-grid">
+      ${items.map(item => `
+        <div class="menu-item-card">
+          <div class="item-name"><span class="veg-dot ${item.veg ? 'veg' : 'nveg'}"></span>${item.name}</div>
+          <div class="item-desc">${item.desc}</div>
+          <div class="item-footer">
+            <div class="item-price">₹${item.price}</div>
+            <div class="qty-controls">
+              <button class="qty-btn" onclick="changeQty('${item.id}',${item.price},-1)">−</button>
+              <div class="qty-num" id="qty-${item.id}">${cart[item.id]?.qty || 0}</div>
+              <button class="qty-btn" onclick="changeQty('${item.id}',${item.price},1,'${item.name}')">+</button>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function changeQty(id, price, delta, name='') {
+  if (!cart[id]) cart[id] = { qty:0, price, name };
+  cart[id].qty = Math.max(0, cart[id].qty + delta);
+  if (cart[id].qty === 0) delete cart[id];
+  document.getElementById('qty-' + id).textContent = cart[id]?.qty || 0;
+  renderCart();
+}
+
+// ── CART ──
+function renderCart() {
+  const body = document.getElementById('cart-body');
+  const keys = Object.keys(cart);
+  if (!keys.length) {
+    body.innerHTML = '<div class="cart-empty">No items added yet</div>';
+    document.getElementById('subtotal').textContent = '₹0';
+    document.getElementById('gst-amt').textContent  = '₹0';
+    document.getElementById('grand-total').textContent = '₹0';
+    document.getElementById('place-btn').disabled = true;
+    return;
+  }
+  body.innerHTML = keys.map(id => {
+    const it = cart[id];
+    return `<div class="cart-item">
+      <div class="ci-name">${it.name}</div>
+      <div class="ci-qty">×${it.qty}</div>
+      <div class="ci-price">₹${it.qty * it.price}</div>
+      <div class="ci-remove" onclick="removeCartItem('${id}')">✕</div>
+    </div>`;
+  }).join('');
+  const sub = keys.reduce((a,id) => a + cart[id].qty * cart[id].price, 0);
+  const gst = Math.round(sub * 0.18);
+  document.getElementById('subtotal').textContent   = '₹' + sub;
+  document.getElementById('gst-amt').textContent    = '₹' + gst;
+  document.getElementById('grand-total').textContent = '₹' + (sub + gst);
+  document.getElementById('place-btn').disabled = false;
+}
+
+function removeCartItem(id) {
+  delete cart[id];
+  document.getElementById('qty-' + id) && (document.getElementById('qty-' + id).textContent = 0);
+  renderCart();
+}
+
+function placeOrder() {
+  const t = TABLES.find(x => x.id === selectedTable);
+  if (t) t.status = 'occupied';
+  todayOrders++;
+  showToast('Order placed for Table ' + String(selectedTable).padStart(2,'0') + ' ✓');
+  cart = {};
+  renderCart();
+  updateChips();
+  setTimeout(() => { renderTables(); showView('tables'); }, 1000);
+}
+
+// ── TOAST ──
+function showToast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = err ? '#ef4444' : '#22c55e';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// enter key on login
+document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+</script>
+</body>
+</html>
