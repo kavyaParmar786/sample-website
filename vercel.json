@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/urban-tadka-system.html" },
+    { "source": "/order", "destination": "/order.html" }
+  ]
+}
