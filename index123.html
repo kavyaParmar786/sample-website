@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Urban Tadka — The Art of Indian Fusion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════════════ */
+:root {
+  --gold:#f5a623; --gold-lt:rgba(245,166,35,0.15); --gold-br:#ffbe4f;
+  --bg:#0c0c0c; --bg2:#111111; --bg3:#171717; --bg4:#1e1e1e;
+  --text:#f0ede8; --muted:rgba(240,237,232,0.5); --dim:rgba(240,237,232,0.22);
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
+  --green:#22c55e; --blue:#3b82f6; --amber:#f59e0b; --red:#ef4444;
+  --sidebar-w:240px;
+  --fd:'Playfair Display',serif; --fb:'Outfit',sans-serif;
+  --r-sm:8px; --r-md:12px; --r-lg:16px;
+  --sh:0 4px 24px rgba(0,0,0,0.4);
+  --sh-gold:0 0 0 1px rgba(245,166,35,0.3), 0 4px 24px rgba(245,166,35,0.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--fb);background:var(--bg);color:var(--text);overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+a{text-decoration:none;color:inherit;}
+button{font-family:var(--fb);cursor:pointer;}
+input,select,textarea{font-family:var(--fb);}
+input[type=date]::-webkit-calendar-picker-indicator{filter:invert(1)opacity(.4);}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(245,166,35,.2);border-radius:2px;}
+
+/* ── CURSOR GLOW ── */
+#cur-glow{position:fixed;top:0;left:0;width:60px;height:60px;border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(245,166,35,.14) 0%,rgba(245,166,35,.04) 55%,transparent 72%);filter:blur(5px);transition:width .32s,height .32s;will-change:left,top;}
+
+/* ── PAGES ── */
+.page{display:none;}
+.page.active{display:block;}
+
+/* ══════════════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════════════ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+@keyframes shimmer{0%,100%{opacity:.6;}50%{opacity:1;}}
+@keyframes bellRing{0%{transform:rotate(0);}20%{transform:rotate(22deg);}40%{transform:rotate(-18deg);}60%{transform:rotate(13deg);}80%{transform:rotate(-8deg);}100%{transform:rotate(0);}}
+@keyframes slideToast{from{transform:translateX(110%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes imgReveal{from{opacity:0;transform:scale(1.04);}to{opacity:1;transform:scale(1);}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 1px rgba(245,166,35,.25);}50%{box-shadow:0 0 0 2px rgba(245,166,35,.5),0 0 24px rgba(245,166,35,.15);}}
+@keyframes newOrderPulse{0%{box-shadow:0 0 0 0 rgba(245,166,35,.5);}70%{box-shadow:0 0 0 10px rgba(245,166,35,0);}100%{box-shadow:0 0 0 0 rgba(245,166,35,0);}}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ══════════════════════════════════════════════════
+   PUBLIC SITE — NAV
+══════════════════════════════════════════════════ */
+#pub-nav{position:fixed;top:0;left:0;right:0;z-index:200;transition:background .4s,backdrop-filter .4s;}
+#pub-nav.scrolled{background:rgba(12,12,12,.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-in{max-width:1260px;margin:0 auto;padding:18px 44px;display:flex;align-items:center;gap:40px;}
+.nav-logo{font-family:var(--fd);font-size:18px;letter-spacing:5px;color:var(--gold);flex:1;font-weight:700;}
+.nav-links{display:flex;gap:32px;align-items:center;}
+.nav-links a{font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.55);text-transform:uppercase;transition:color .2s;font-weight:500;}
+.nav-links a:hover{color:var(--gold);}
+.btn-res{background:var(--gold);color:#1a0e00;border:none;padding:10px 24px;border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;transition:all .25s;}
+.btn-res:hover{background:var(--gold-br);transform:translateY(-1px);box-shadow:0 8px 24px rgba(245,166,35,.3);}
+
+/* ══════════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════════ */
+#hero{position:relative;height:100vh;min-height:700px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.h-bg{position:absolute;inset:0;background:url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1800&q=80') center/cover;animation:imgReveal 1.8s ease forwards;}
+.h-ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,12,.25) 0%,rgba(12,12,12,.65) 55%,rgba(12,12,12,.98) 100%);}
+.h-ov2{position:absolute;inset:0;background:radial-gradient(ellipse at 65% 40%,rgba(180,80,15,.2) 0%,transparent 55%);}
+.h-orb{position:absolute;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.09) 0%,transparent 70%);animation:pulse 5s ease-in-out infinite;}
+.h-orb1{width:700px;height:700px;top:-200px;right:-200px;}
+.h-orb2{width:500px;height:500px;bottom:-100px;left:-160px;animation-delay:2.5s;}
+.h-content{position:relative;z-index:2;text-align:center;max-width:860px;padding:0 32px;animation:fadeUp 1.1s ease forwards;}
+.h-eyebrow{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:24px;opacity:.85;}
+.h-h1{font-family:var(--fd);font-size:clamp(46px,8.5vw,100px);font-weight:700;line-height:1.05;margin-bottom:24px;color:#fff;}
+.h-h1 em{color:var(--gold);font-style:italic;}
+.h-sub{font-size:17px;color:rgba(255,255,255,.52);line-height:1.8;max-width:540px;margin:0 auto 44px;font-weight:300;}
+.h-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-gold{background:var(--gold);color:#1a0e00;border:none;padding:15px 38px;border-radius:6px;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;transition:all .28s;}
+.btn-gold:hover{background:var(--gold-br);transform:translateY(-2px);box-shadow:0 12px 40px rgba(245,166,35,.28);}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.25);padding:15px 38px;border-radius:6px;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;transition:all .28s;}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+.h-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.22);z-index:2;}
+.h-scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--gold),transparent);animation:pulse 2s infinite;}
+
+/* ══════════════════════════════════════════════════
+   PUBLIC SECTIONS
+══════════════════════════════════════════════════ */
+.sec{padding:110px 44px;}
+.sec-in{max-width:1200px;margin:0 auto;}
+.sec-ctr{text-align:center;margin-bottom:64px;}
+.eyebrow{font-size:10px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:block;font-weight:600;}
+.sh2{font-family:var(--fd);font-size:clamp(32px,5vw,58px);font-weight:700;line-height:1.1;color:#fff;}
+.exp-p{font-size:17px;color:var(--muted);line-height:1.85;margin-bottom:20px;font-weight:300;}
+
+/* STORY */
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:90px;align-items:center;}
+.stat-row{display:flex;gap:36px;margin-top:44px;flex-wrap:wrap;}
+.stat-item{}
+.sn{font-family:var(--fd);font-size:40px;color:var(--gold);font-weight:700;display:block;line-height:1;}
+.sl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:6px;display:block;}
+.exp-img-wrap{position:relative;}
+.exp-img{width:100%;aspect-ratio:4/5;border-radius:var(--r-lg);overflow:hidden;object-fit:cover;display:block;}
+.exp-badge{position:absolute;bottom:-20px;left:-22px;background:rgba(12,12,12,.96);border:1px solid rgba(245,166,35,.2);padding:16px 20px;border-radius:var(--r-md);font-size:13px;color:var(--text);line-height:1.7;backdrop-filter:blur(20px);max-width:226px;box-shadow:var(--sh);}
+.exp-badge span{color:var(--muted);font-size:11px;}
+
+/* MENU (public) */
+.mfb{display:flex;gap:8px;margin-bottom:40px;flex-wrap:wrap;}
+.fb{background:transparent;border:1px solid rgba(255,255,255,.1);color:var(--muted);padding:9px 20px;border-radius:20px;font-size:12px;letter-spacing:.5px;transition:all .2s;font-weight:500;}
+.fb:hover{border-color:var(--gold);color:var(--gold);}
+.fb.active{background:var(--gold-lt);border-color:var(--gold);color:var(--gold);}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;}
+.mc{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-md);padding:22px;display:flex;gap:16px;transition:all .3s;}
+.mc:hover{transform:translateY(-5px);box-shadow:0 20px 50px rgba(245,166,35,.1);border-color:rgba(245,166,35,.2);}
+.me{font-size:36px;flex-shrink:0;}
+.mct{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;}
+.mn{font-family:var(--fd);font-size:16px;font-weight:700;color:#fff;line-height:1.3;}
+.mp{color:var(--gold);font-weight:700;font-size:15px;flex-shrink:0;margin-left:8px;}
+.md{font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* GALLERY */
+.gg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.gc{aspect-ratio:1;border-radius:var(--r-md);overflow:hidden;position:relative;transition:transform .4s;}
+.gc:hover{transform:scale(1.035);}
+.gc img{width:100%;height:100%;object-fit:cover;transition:transform .5s,filter .4s;display:block;}
+.gc:hover img{transform:scale(1.08);filter:brightness(1.1);}
+.gl{position:absolute;bottom:0;left:0;right:0;padding:40px 16px 16px;background:linear-gradient(to top,rgba(0,0,0,.8),transparent);font-family:var(--fd);font-size:15px;color:#fff;font-weight:700;}
+
+/* INTERIOR */
+.int-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.int-img{width:100%;border-radius:var(--r-lg);aspect-ratio:16/10;object-fit:cover;display:block;margin-bottom:22px;}
+.int-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.int-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-md);padding:20px;display:flex;gap:14px;align-items:flex-start;transition:all .25s;}
+.int-card:hover{border-color:rgba(245,166,35,.2);background:var(--bg4);}
+.int-icon{font-size:26px;flex-shrink:0;}
+.int-tt{font-family:var(--fd);font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;}
+.int-td{font-size:13px;color:var(--muted);line-height:1.55;}
+
+/* TESTIMONIALS */
+.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.tc{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-md);padding:32px;transition:all .28s;}
+.tc:hover{border-color:rgba(245,166,35,.18);transform:translateY(-4px);box-shadow:var(--sh);}
+.ts{color:var(--gold);font-size:15px;letter-spacing:2px;margin-bottom:16px;}
+.tt{font-size:16px;color:var(--muted);line-height:1.85;margin-bottom:24px;font-style:italic;font-weight:300;}
+.ta{display:flex;gap:12px;align-items:center;}
+.tav{width:42px;height:42px;border-radius:50%;background:var(--gold-lt);border:1px solid rgba(245,166,35,.35);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;font-size:15px;flex-shrink:0;}
+.tn{font-weight:600;font-size:14px;color:var(--text);}
+.tr{font-size:12px;color:var(--muted);margin-top:2px;}
+
+/* BOOKING */
+.bg{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+.cl{font-size:15px;color:var(--muted);margin-bottom:14px;line-height:1.65;}
+.bf{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-lg);padding:40px;backdrop-filter:blur(20px);}
+.bft{font-family:var(--fd);font-size:24px;color:#fff;margin-bottom:28px;font-weight:700;}
+.fg{margin-bottom:18px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fl{display:block;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:600;}
+.fi{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:var(--r-sm);padding:12px 14px;color:#fff;font-size:14px;outline:none;transition:all .22s;-webkit-appearance:none;}
+.fi:focus{border-color:rgba(245,166,35,.5);background:rgba(255,255,255,.08);}
+.fi option{background:#1a1200;color:#fff;}
+.bsuccess{background:var(--bg3);border:1px solid rgba(245,166,35,.2);border-radius:var(--r-lg);padding:52px 40px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;animation:fadeIn .5s ease;}
+.bsuccess h3{font-family:var(--fd);font-size:26px;color:var(--gold);}
+
+/* FOOTER */
+#ft{background:#080808;border-top:1px solid var(--border);padding:64px 44px 28px;}
+.ft-in{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:56px;padding-bottom:40px;}
+.fth{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:600;}
+.ftt{font-size:14px;color:var(--muted);margin-bottom:8px;line-height:1.7;}
+.ft-bot{max-width:1200px;margin:0 auto;border-top:1px solid var(--border);padding-top:24px;text-align:center;}
+
+/* ══════════════════════════════════════════════════
+   LOGIN SCREENS
+══════════════════════════════════════════════════ */
+.lg-root{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:32px;position:relative;overflow:hidden;}
+.lg-bg-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.07) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
+.lg-card{position:relative;z-index:1;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r-lg);padding:48px 44px;width:100%;max-width:420px;display:flex;flex-direction:column;align-items:center;animation:fadeUp .6s ease;}
+.lg-logo-wrap{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.lg-logo-icon{width:44px;height:44px;background:var(--gold-lt);border:1px solid rgba(245,166,35,.3);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;font-size:22px;}
+.lg-logo-name{font-family:var(--fd);font-size:18px;color:var(--gold);font-weight:700;letter-spacing:3px;}
+.lg-title{font-family:var(--fd);font-size:26px;color:#fff;text-align:center;margin-bottom:4px;margin-top:12px;}
+.lg-sub{font-size:13px;color:var(--muted);margin-bottom:28px;}
+.lg-div{width:100%;height:1px;background:var(--border);margin-bottom:24px;}
+.lg-field{width:100%;margin-bottom:14px;}
+.lg-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:7px;font-weight:600;}
+.lg-input{width:100%;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:var(--r-sm);padding:13px 16px;color:#fff;font-size:15px;outline:none;transition:border-color .22s,background .22s;}
+.lg-input:focus{border-color:rgba(245,166,35,.5);background:rgba(255,255,255,.08);}
+.lg-input::placeholder{color:var(--dim);}
+.lg-err{color:#f87171;font-size:13px;margin-bottom:10px;text-align:center;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.22);padding:9px 14px;border-radius:var(--r-sm);width:100%;display:none;}
+.lg-btn{width:100%;background:var(--gold);color:#1a0e00;border:none;padding:14px;border-radius:var(--r-sm);font-size:15px;font-weight:700;letter-spacing:.5px;transition:all .28s;margin-top:4px;}
+.lg-btn:hover{background:var(--gold-br);box-shadow:0 8px 28px rgba(245,166,35,.3);}
+.lg-hint{font-size:11px;color:rgba(255,255,255,.2);margin-top:16px;font-family:monospace;text-align:center;background:rgba(255,255,255,.04);padding:8px 14px;border-radius:var(--r-sm);width:100%;letter-spacing:.5px;}
+.lg-back{background:none;border:none;color:var(--muted);font-size:13px;margin-top:12px;transition:color .2s;}
+.lg-back:hover{color:var(--gold);}
+
+/* ══════════════════════════════════════════════════
+   SAAS DASHBOARD SHELL
+══════════════════════════════════════════════════ */
+.dash{display:flex;height:100vh;overflow:hidden;background:var(--bg);}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden;transition:width .3s;}
+.sidebar::-webkit-scrollbar{width:0;}
+.sb-logo{padding:22px 20px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.sb-logo-icon{width:36px;height:36px;background:var(--gold);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.sb-logo-text{display:flex;flex-direction:column;line-height:1;}
+.sb-logo-name{font-family:var(--fd);font-size:14px;color:var(--gold);font-weight:700;letter-spacing:2px;}
+.sb-logo-role{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+.sb-nav{padding:16px 12px;flex:1;}
+.sb-section{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);padding:0 8px;margin-bottom:6px;margin-top:18px;}
+.sb-section:first-child{margin-top:0;}
+.sb-item{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:var(--r-sm);font-size:13px;color:var(--muted);transition:all .18s;cursor:pointer;border:1px solid transparent;margin-bottom:2px;background:none;width:100%;text-align:left;font-weight:500;}
+.sb-item:hover{background:rgba(255,255,255,.05);color:var(--text);}
+.sb-item.active{background:var(--gold-lt);border-color:rgba(245,166,35,.22);color:var(--gold);}
+.sb-item-icon{font-size:16px;width:22px;text-align:center;flex-shrink:0;}
+.sb-item-badge{margin-left:auto;background:var(--gold);color:#1a0e00;font-size:10px;font-weight:700;padding:1px 7px;border-radius:10px;min-width:20px;text-align:center;}
+.sb-item-badge.red{background:var(--red);color:#fff;}
+.sb-footer{padding:14px 12px;border-top:1px solid var(--border);flex-shrink:0;}
+.sb-user{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r-sm);background:rgba(255,255,255,.04);}
+.sb-user-av{width:32px;height:32px;border-radius:50%;background:var(--gold-lt);border:1px solid rgba(245,166,35,.3);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:14px;font-weight:700;flex-shrink:0;}
+.sb-user-name{font-size:13px;font-weight:600;color:var(--text);}
+.sb-user-role{font-size:11px;color:var(--muted);}
+.sb-logout{background:none;border:none;margin-left:auto;color:var(--muted);font-size:18px;transition:color .2s;padding:4px;}
+.sb-logout:hover{color:var(--red);}
+
+/* ── MAIN AREA ── */
+.dash-main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.dash-topbar{background:var(--bg2);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:40;backdrop-filter:blur(20px);}
+.dash-topbar-left{display:flex;align-items:center;gap:14px;}
+.topbar-title{font-size:16px;font-weight:600;color:var(--text);}
+.topbar-subtitle{font-size:12px;color:var(--muted);}
+.topbar-breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);}
+.topbar-breadcrumb span{color:var(--text);font-weight:500;}
+.dash-topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-time{font-size:12px;color:var(--muted);font-family:monospace;}
+.topbar-badge{background:var(--gold-lt);border:1px solid rgba(245,166,35,.3);color:var(--gold);padding:4px 10px;border-radius:4px;font-size:11px;font-weight:600;}
+.dash-body{padding:28px;flex:1;}
+
+/* ── TOAST ── */
+.toast{position:fixed;top:72px;right:24px;z-index:999;background:var(--green);color:#fff;padding:13px 22px;border-radius:var(--r-sm);font-size:14px;font-weight:600;animation:slideToast .35s ease;box-shadow:0 8px 28px rgba(34,197,94,.35);display:none;align-items:center;gap:8px;}
+
+/* ══════════════════════════════════════════════════
+   DASHBOARD — STATS ROW
+══════════════════════════════════════════════════ */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-md);padding:20px 22px;transition:border-color .2s;}
+.stat-card:hover{border-color:rgba(245,166,35,.2);}
+.stat-card-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:600;}
+.stat-card-value{font-family:var(--fd);font-size:30px;font-weight:700;color:#fff;line-height:1;}
+.stat-card-value.gold{color:var(--gold);}
+.stat-card-sub{font-size:12px;color:var(--muted);margin-top:6px;}
+.stat-card-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:5px;}
+
+/* ══════════════════════════════════════════════════
+   WAITER — TABLES VIEW
+══════════════════════════════════════════════════ */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.section-hdr h3{font-size:14px;font-weight:600;color:var(--text);letter-spacing:.3px;}
+.section-hdr-right{display:flex;gap:8px;align-items:center;}
+
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;}
+.tcard{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-md);padding:18px 14px;transition:all .22s;text-align:center;cursor:pointer;position:relative;}
+.tcard:hover{background:var(--bg4);border-color:rgba(255,255,255,.16);transform:translateY(-2px);box-shadow:var(--sh);}
+.tcard.sel{background:var(--gold-lt);border-color:rgba(245,166,35,.4);animation:glow 3s infinite;}
+.tcard.occ{border-color:rgba(245,158,11,.35);}
+.tcard.occ::before{content:'';position:absolute;top:10px;right:10px;width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px rgba(245,158,11,.6);}
+.tnum{font-family:var(--fd);font-size:26px;font-weight:700;color:#fff;line-height:1;}
+.tseat{font-size:11px;color:var(--muted);margin-top:5px;letter-spacing:.5px;}
+.tst{font-size:11px;margin-top:9px;font-weight:500;}
+.tact{color:var(--amber);}
+.tfree{color:rgba(255,255,255,.22);}
+
+/* ACTIVE ORDERS */
+.aolist{display:flex;flex-direction:column;gap:10px;}
+.aocard{background:var(--bg3);border:1px solid var(--border);border-left:3px solid transparent;border-radius:var(--r-md);padding:18px 20px;transition:all .2s;}
+.aocard:hover{border-color:var(--border2);}
+.aocard.border-amber{border-left-color:var(--amber);}
+.aocard.border-blue{border-left-color:var(--blue);}
+.aocard.border-green{border-left-color:var(--green);}
+.aohdr{display:flex;justify-content:space-between;margin-bottom:12px;align-items:center;}
+.aot{font-weight:700;font-size:15px;color:#fff;}
+.stbg{font-size:10px;letter-spacing:1px;padding:4px 10px;border-radius:4px;font-weight:700;text-transform:uppercase;}
+.s-pending{background:rgba(245,158,11,.15);color:var(--amber);}
+.s-preparing{background:rgba(59,130,246,.15);color:#60a5fa;}
+.s-ready{background:rgba(34,197,94,.15);color:var(--green);}
+.s-completed{background:rgba(107,114,128,.15);color:#9ca3af;}
+.aoitem{font-size:13px;color:var(--muted);margin-bottom:5px;display:flex;justify-content:space-between;}
+.aototl{font-size:14px;color:var(--gold);font-weight:700;margin-top:10px;border-top:1px solid var(--border);padding-top:10px;}
+
+/* ORDER VIEW */
+.order-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;}
+.order-panel{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;}
+.order-panel-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.order-panel-title{font-size:13px;font-weight:600;color:var(--text);letter-spacing:.3px;}
+.catbar{display:flex;gap:6px;padding:14px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap;background:var(--bg2);}
+.olist{padding:8px;}
+.oi{display:flex;align-items:center;gap:14px;padding:13px 12px;border-radius:var(--r-sm);transition:background .18s;}
+.oi:hover{background:rgba(255,255,255,.04);}
+.oi-emoji{font-size:28px;flex-shrink:0;}
+.oin{font-size:14px;color:#fff;font-weight:500;}
+.oid{font-size:12px;color:var(--muted);margin-top:2px;}
+.oprx{color:var(--gold);font-size:14px;font-weight:700;min-width:60px;text-align:right;flex-shrink:0;}
+.qc{display:flex;align-items:center;gap:8px;}
+.qb{width:28px;height:28px;border-radius:50%;background:var(--gold-lt);border:1px solid rgba(245,166,35,.35);color:var(--gold);font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .18s;padding:0;line-height:1;}
+.qb:hover{background:rgba(245,166,35,.25);}
+.qn{font-size:15px;font-weight:700;min-width:20px;text-align:center;color:#fff;}
+.addbtn{background:var(--gold-lt);border:1px solid rgba(245,166,35,.35);color:var(--gold);padding:6px 16px;border-radius:6px;font-size:12px;font-weight:700;transition:all .18s;}
+.addbtn:hover{background:rgba(245,166,35,.22);}
+
+/* BILL */
+.bpanel{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;position:sticky;top:88px;}
+.bpanel-hdr{padding:16px 20px;border-bottom:1px solid var(--border);background:var(--bg2);}
+.bpanel-title{font-size:13px;font-weight:600;color:var(--text);}
+.bpanel-body{padding:18px 20px;}
+.birow{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin-bottom:9px;}
+.birow span:last-child{color:var(--text);font-weight:500;}
+.bdiv{border:none;border-top:1px solid var(--border);margin:12px 0;}
+.btot{display:flex;justify-content:space-between;font-size:17px;font-weight:700;color:#fff;margin-bottom:4px;}
+.btax{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px;}
+.bempty{color:var(--dim);font-size:13px;text-align:center;padding:32px 0;}
+.btn-place{width:100%;background:var(--gold);color:#1a0e00;border:none;padding:14px;border-radius:var(--r-sm);font-size:14px;font-weight:700;letter-spacing:.5px;transition:all .25s;margin-top:14px;}
+.btn-place:hover{background:var(--gold-br);box-shadow:0 6px 24px rgba(245,166,35,.3);}
+
+/* RESERVATIONS VIEW */
+.res-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;}
+.res-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-md);padding:20px;transition:all .22s;}
+.res-card:hover{border-color:rgba(245,166,35,.2);}
+.res-id{font-family:monospace;font-size:12px;color:var(--gold);margin-bottom:10px;background:var(--gold-lt);display:inline-block;padding:3px 8px;border-radius:4px;}
+.res-name{font-size:16px;font-weight:700;color:#fff;margin-bottom:8px;}
+.res-meta{font-size:13px;color:var(--muted);margin-bottom:4px;}
+
+/* ══════════════════════════════════════════════════
+   KITCHEN PANEL
+══════════════════════════════════════════════════ */
+.k-filter-bar{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
+.k-stat-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+.k-stat{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-md);padding:16px 18px;display:flex;gap:14px;align-items:center;}
+.k-stat-icon{font-size:28px;}
+.k-stat-val{font-family:var(--fd);font-size:26px;font-weight:700;color:#fff;line-height:1;}
+.k-stat-label{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:.5px;}
+
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;}
+.kcard{background:var(--bg3);border:1px solid var(--border);border-top:3px solid;border-radius:var(--r-md);padding:20px;transition:all .28s;}
+.kcard.new-order{animation:newOrderPulse 1.5s ease 3;}
+.kchdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.ktbl{font-family:var(--fd);font-size:22px;font-weight:700;color:#fff;display:block;}
+.ktim{font-size:12px;color:var(--muted);margin-top:2px;display:block;}
+.kbadge{font-size:10px;letter-spacing:1px;padding:5px 10px;border-radius:4px;font-weight:700;text-transform:uppercase;}
+.kitems{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.kitem{background:var(--bg2);border-radius:var(--r-sm);padding:11px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.kil{display:flex;gap:11px;align-items:flex-start;flex:1;}
+.kin{font-size:13px;color:#fff;font-weight:500;margin-bottom:4px;}
+.kibadge{font-size:10px;letter-spacing:.5px;padding:2px 7px;border-radius:3px;font-weight:700;text-transform:uppercase;display:inline-block;}
+.kacts{display:flex;gap:6px;border-top:1px solid var(--border);padding-top:14px;}
+.kbtn{flex:1;padding:9px 0;border-radius:var(--r-sm);border:none;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;transition:all .2s;}
+.kbp{background:rgba(59,130,246,.18);color:#60a5fa;border:1px solid rgba(59,130,246,.2);}
+.kbp:hover{background:rgba(59,130,246,.3);}
+.kbr{background:rgba(34,197,94,.18);color:#34d399;border:1px solid rgba(34,197,94,.2);}
+.kbr:hover{background:rgba(34,197,94,.3);}
+.kbd{background:rgba(107,114,128,.18);color:#9ca3af;border:1px solid rgba(107,114,128,.2);}
+.kbd:hover{background:rgba(107,114,128,.28);}
+.sbtn{padding:5px 9px;border-radius:4px;border:none;font-size:11px;font-weight:700;transition:all .18s;}
+.sbp{background:rgba(59,130,246,.15);color:#60a5fa;}
+.sbr{background:rgba(34,197,94,.15);color:#34d399;}
+.sbd{background:rgba(239,68,68,.15);color:#f87171;}
+.kempty{text-align:center;padding:80px 0;grid-column:1/-1;}
+.kempty p{color:var(--muted);margin-top:14px;font-size:15px;}
+.bell{font-size:22px;margin-left:10px;display:inline-block;transform-origin:top center;}
+.bell.ringing{animation:bellRing .55s ease;}
+.clist{display:flex;flex-direction:column;gap:6px;}
+.ci{display:flex;gap:14px;align-items:center;font-size:13px;color:var(--muted);background:var(--bg2);padding:10px 14px;border-radius:var(--r-sm);flex-wrap:wrap;}
+
+/* ══════════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════════ */
+@media(max-width:1100px){
+  .order-layout{grid-template-columns:1fr;}
+  .stats-row{grid-template-columns:repeat(2,1fr);}
+  .bpanel{position:static;}
+  :root{--sidebar-w:200px;}
+}
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .exp-grid,.int-grid,.bg{grid-template-columns:1fr;gap:44px;}
+  .tg,.ft-in{grid-template-columns:1fr;}
+  .gg{grid-template-columns:repeat(2,1fr);}
+  .nav-links{display:none;}
+  .nav-in{padding:14px 20px;}
+  .sidebar.mob-open{display:flex;position:fixed;inset:0 auto 0 0;z-index:300;width:240px;}
+  .dash-main{width:100%;}
+}
+@media(max-width:640px){
+  .gg{grid-template-columns:1fr;}
+  .sec{padding:70px 20px;}
+  .h-h1{font-size:40px;}
+  .stat-row{flex-wrap:wrap;gap:20px;}
+  .frow{grid-template-columns:1fr;}
+  .int-cards{grid-template-columns:1fr;}
+  .tgrid{grid-template-columns:repeat(auto-fill,minmax(110px,1fr));}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .k-stat-strip{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="cur-glow"></div>
+
+<!-- ══════════════════════════════════════════════
+  PUBLIC WEBSITE
+══════════════════════════════════════════════ -->
+<div id="page-public" class="page active">
+
+  <nav id="pub-nav">
+    <div class="nav-in">
+      <span class="nav-logo">URBAN TADKA</span>
+      <div class="nav-links">
+        <a href="#sec-story">Story</a>
+        <a href="#sec-menu">Menu</a>
+        <a href="#sec-gallery">Gallery</a>
+        <a href="#sec-reserve">Reserve</a>
+        <a href="order.html" style="color:var(--gold);font-weight:600;">Order Online</a>
+      </div>
+      <button class="btn-res" onclick="ss('sec-reserve')">Reserve Table</button>
+    </div>
+  </nav>
+
+  <section id="hero">
+    <div class="h-bg"></div><div class="h-ov"></div><div class="h-ov2"></div>
+    <div class="h-orb h-orb1"></div><div class="h-orb h-orb2"></div>
+    <div class="h-content">
+      <p class="h-eyebrow">Est. 2019 · New Delhi</p>
+      <h1 class="h-h1">Experience the<br><em>Art of Indian Fusion</em></h1>
+      <p class="h-sub">Where ancient spice routes meet contemporary cuisine — every plate tells a story of culture, craft, and obsession.</p>
+      <div class="h-btns">
+        <button class="btn-gold" onclick="ss('sec-reserve')">Reserve a Table</button>
+        <a href="order.html" class="btn-ghost" style="display:inline-flex;align-items:center;gap:8px;">🛵 Order Online</a>
+        <button class="btn-ghost" onclick="ss('sec-menu')">Explore Menu</button>
+      </div>
+    </div>
+    <div class="h-scroll"><div class="h-scroll-line"></div>Scroll</div>
+  </section>
+
+  <section class="sec" id="sec-story" style="background:rgba(255,255,255,.012);">
+    <div class="sec-in">
+      <div class="exp-grid">
+        <div>
+          <span class="eyebrow">Our Philosophy</span>
+          <h2 class="sh2" style="margin-bottom:24px;">Where Heritage<br>Meets Haute Cuisine</h2>
+          <p class="exp-p">Urban Tadka was born from a singular obsession: to honour the profound complexity of India's culinary heritage while pushing it into uncharted, contemporary territory.</p>
+          <p class="exp-p">Our kitchen sources single-origin spices from heirloom farms, ages proteins in Himalayan salt chambers, and draws on techniques from Paris, Tokyo, and your grandmother's kitchen — in equal measure.</p>
+          <div class="stat-row">
+            <div class="stat-item"><span class="sn">12</span><span class="sl">Awards</span></div>
+            <div class="stat-item"><span class="sn">200+</span><span class="sl">Spice Origins</span></div>
+            <div class="stat-item"><span class="sn">48h</span><span class="sl">Prep Time</span></div>
+            <div class="stat-item"><span class="sn">30</span><span class="sl">Covers Only</span></div>
+          </div>
+        </div>
+        <div class="exp-img-wrap">
+          <img class="exp-img" src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&q=80" alt="Urban Tadka dining room" loading="lazy"/>
+          <div class="exp-badge">"Best Indian Restaurant 2024"<br><span>— Times Food Awards, New Delhi</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="sec-menu">
+    <div class="sec-in">
+      <div class="sec-ctr"><span class="eyebrow">Curated Selections</span><h2 class="sh2">The Menu</h2></div>
+      <div class="mfb" id="pub-mfb"></div>
+      <div class="mgrid" id="pub-mgrid"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="sec-gallery" style="background:rgba(255,255,255,.012);">
+    <div class="sec-in">
+      <div class="sec-ctr"><span class="eyebrow">Visual Stories</span><h2 class="sh2">The Gallery</h2></div>
+      <div class="gg">
+        <div class="gc"><img src="https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=600&q=80" alt="Indian food" loading="lazy"/><div class="gl">Galouti Kebab</div></div>
+        <div class="gc"><img src="https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=600&q=80" alt="Indian food" loading="lazy"/><div class="gl">Chef's Platter</div></div>
+        <div class="gc"><img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80" alt="Food" loading="lazy"/><div class="gl">Garden Harvest</div></div>
+        <div class="gc"><img src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=600&q=80" alt="Indian food" loading="lazy"/><div class="gl">Gulab Soufflé</div></div>
+        <div class="gc"><img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=80" alt="Food" loading="lazy"/><div class="gl">Lobster Malai</div></div>
+        <div class="gc"><img src="https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?w=600&q=80" alt="Indian cuisine" loading="lazy"/><div class="gl">Raan-e-Jadid</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-in">
+      <div class="int-grid">
+        <div>
+          <span class="eyebrow">The Space</span>
+          <h2 class="sh2" style="margin-bottom:24px;">An Atmosphere<br>Unlike Any Other</h2>
+          <img class="int-img" src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?w=800&q=80" alt="Restaurant interior" loading="lazy"/>
+          <p class="exp-p">Designed by award-winning studio Kala+Arq, our 3,200 sq ft dining room fuses Mughal arches with brutalist concrete, brass with aged teak, and candlelight with curated neon.</p>
+          <p class="exp-p">Only 30 covers per evening. Every seat a front-row experience.</p>
+        </div>
+        <div class="int-cards" style="margin-top:80px;">
+          <div class="int-card"><span class="int-icon">🕯️</span><div><p class="int-tt">Mood Lighting</p><p class="int-td">Handcrafted brass lanterns, soft amber warmth</p></div></div>
+          <div class="int-card"><span class="int-icon">🎵</span><div><p class="int-tt">Live Music</p><p class="int-td">Curated jazz & Hindustani Fri–Sun</p></div></div>
+          <div class="int-card"><span class="int-icon">🧊</span><div><p class="int-tt">Private Dining</p><p class="int-td">The Vault: exclusive 8-person cellar room</p></div></div>
+          <div class="int-card"><span class="int-icon">🍷</span><div><p class="int-tt">Sommelier</p><p class="int-td">150-label curated wine cellar</p></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" style="background:rgba(255,255,255,.012);">
+    <div class="sec-in">
+      <div class="sec-ctr"><span class="eyebrow">Voices</span><h2 class="sh2">What Guests Say</h2></div>
+      <div class="tg">
+        <div class="tc"><div class="ts">★★★★★</div><p class="tt">"The Raan-e-Jadid alone is worth a flight to Delhi. Urban Tadka operates in a rarefied space where fine dining and soul food become the same thing."</p><div class="ta"><div class="tav">P</div><div><p class="tn">Priya S.</p><p class="tr">Food Critic, Condé Nast Traveller</p></div></div></div>
+        <div class="tc"><div class="ts">★★★★★</div><p class="tt">"As a chef, I am hard to impress. This kitchen stunned me. Technical precision and emotional warmth are simultaneously present in every single dish."</p><div class="ta"><div class="tav">A</div><div><p class="tn">Arjun M.</p><p class="tr">Chef-Owner, Bangalore</p></div></div></div>
+        <div class="tc"><div class="ts">★★★★★</div><p class="tt">"I've dined at Noma, Eleven Madison, and Gaggan. Urban Tadka belongs in that conversation. Book months ahead — this is a bucket-list experience."</p><div class="ta"><div class="tav">L</div><div><p class="tn">Leila K.</p><p class="tr">Travel Blogger, 2.1M followers</p></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="sec-reserve" style="background:rgba(245,166,35,.018);">
+    <div class="sec-in">
+      <div class="bg">
+        <div>
+          <span class="eyebrow">Reservations</span>
+          <h2 class="sh2" style="margin-bottom:22px;">Reserve Your<br>Evening</h2>
+          <p class="exp-p">We accept reservations up to 60 days in advance. For parties above 8 or private events, please call us directly.</p>
+          <div style="margin-top:32px;">
+            <p class="cl">📍 12, Lodhi Colony, New Delhi — 110003</p>
+            <p class="cl">📞 +91 98765 43210</p>
+            <p class="cl">🕐 Tue–Sun · Lunch 12:30–3pm · Dinner 7–11pm</p>
+            <p class="cl">📧 reservations@urbantadka.in</p>
+          </div>
+        </div>
+        <div id="book-container">
+          <div class="bf">
+            <h3 class="bft">Book a Table</h3>
+            <div class="fg"><label class="fl">Full Name</label><input class="fi" type="text" id="b-name" placeholder="Your full name"/></div>
+            <div class="fg"><label class="fl">Phone Number</label><input class="fi" type="tel" id="b-phone" placeholder="+91 XXXXX XXXXX"/></div>
+            <div class="fg"><label class="fl">Date</label><input class="fi" type="date" id="b-date"/></div>
+            <div class="frow">
+              <div class="fg"><label class="fl">Time</label><select class="fi" id="b-time"><option value="">Select time</option><option>12:30 PM</option><option>1:00 PM</option><option>1:30 PM</option><option>7:00 PM</option><option>7:30 PM</option><option>8:00 PM</option><option>8:30 PM</option><option>9:00 PM</option></select></div>
+              <div class="fg"><label class="fl">Guests</label><select class="fi" id="b-guests"><option>1 Guest</option><option selected>2 Guests</option><option>3 Guests</option><option>4 Guests</option><option>5 Guests</option><option>6 Guests</option><option>7 Guests</option><option>8 Guests</option></select></div>
+            </div>
+            <button class="btn-gold" style="width:100%;margin-top:6px;" onclick="submitBooking()">Confirm Reservation →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="ft">
+    <div class="ft-in">
+      <div>
+        <p style="font-family:var(--fd);font-size:18px;letter-spacing:4px;color:var(--gold);font-weight:700;margin-bottom:10px;">URBAN TADKA</p>
+        <p class="ftt">The Art of Indian Fusion</p>
+        <p class="ftt" style="margin-top:14px;color:rgba(255,255,255,.18);font-size:12px;">Staff access via secure URL only.</p>
+      </div>
+      <div><p class="fth">Hours</p><p class="ftt">Tue–Sun</p><p class="ftt">Lunch 12:30–3pm</p><p class="ftt">Dinner 7–11pm</p><p class="ftt" style="color:var(--dim);">Monday Closed</p></div>
+      <div><p class="fth">Contact</p><p class="ftt">12, Lodhi Colony</p><p class="ftt">New Delhi — 110003</p><p class="ftt" style="margin-top:10px;">+91 98765 43210</p><p class="ftt">reservations@urbantadka.in</p></div>
+    </div>
+    <div class="ft-bot"><p style="color:rgba(255,255,255,.16);font-size:12px;">© 2025 Urban Tadka. All rights reserved.</p></div>
+  </footer>
+
+</div><!-- /page-public -->
+
+<!-- ══════════════════════════════════════════════
+  STAFF LOGIN
+══════════════════════════════════════════════ -->
+<div id="page-staff-login" class="page">
+  <div class="lg-root">
+    <div class="lg-bg-glow"></div>
+    <div class="lg-card">
+      <div class="lg-logo-wrap"><div class="lg-logo-icon">🍽️</div><span class="lg-logo-name">URBAN TADKA</span></div>
+      <h2 class="lg-title">Staff Portal</h2>
+      <p class="lg-sub">Waiter Access — Restaurant OS</p>
+      <div class="lg-div"></div>
+      <div class="lg-field"><label class="lg-label">Username</label><input class="lg-input" type="text" id="su" placeholder="Enter username" autocomplete="off" spellcheck="false"/></div>
+      <div class="lg-field"><label class="lg-label">Password</label><input class="lg-input" type="password" id="sp" placeholder="Enter password" onkeydown="if(event.key==='Enter')doStaffLogin()"/></div>
+      <div id="serr" class="lg-err"></div>
+      <button class="lg-btn" onclick="doStaffLogin()">Sign In →</button>
+      <p class="lg-hint">Demo: waiter / tadka123</p>
+      <button class="lg-back" onclick="goPublic()">← Back to main site</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  WAITER DASHBOARD
+══════════════════════════════════════════════ -->
+<div id="page-waiter" class="page">
+  <div class="dash">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="w-sidebar">
+      <div class="sb-logo">
+        <div class="sb-logo-icon">🍽️</div>
+        <div class="sb-logo-text">
+          <span class="sb-logo-name">URBAN TADKA</span>
+          <span class="sb-logo-role">Staff Portal</span>
+        </div>
+      </div>
+      <nav class="sb-nav">
+        <div class="sb-section">Main</div>
+        <button class="sb-item active" id="sw-tables" onclick="wTab('tables')">
+          <span class="sb-item-icon">🏠</span> Floor View
+        </button>
+        <button class="sb-item" id="sw-order" onclick="wTab('order')" style="opacity:.4;">
+          <span class="sb-item-icon">📝</span> New Order
+        </button>
+        <div class="sb-section">Records</div>
+        <button class="sb-item" id="sw-reservations" onclick="wTab('reservations')">
+          <span class="sb-item-icon">📅</span> Reservations
+        </button>
+        <div class="sb-section">Status</div>
+        <div class="sb-item" style="cursor:default;">
+          <span class="sb-item-icon">📊</span> Orders
+          <span class="sb-item-badge" id="w-sb-badge">0</span>
+        </div>
+      </nav>
+      <div class="sb-footer">
+        <div class="sb-user">
+          <div class="sb-user-av">W</div>
+          <div><p class="sb-user-name">Waiter</p><p class="sb-user-role">Staff Access</p></div>
+          <button class="sb-logout" onclick="doLogout()" title="Logout">⎋</button>
+        </div>
+      </div>
+    </aside>
+    <!-- MAIN -->
+    <main class="dash-main">
+      <div class="dash-topbar">
+        <div class="dash-topbar-left">
+          <div>
+            <div class="topbar-title" id="w-topbar-title">Floor View</div>
+            <div class="topbar-subtitle" id="w-topbar-sub">Urban Tadka Restaurant OS</div>
+          </div>
+        </div>
+        <div class="dash-topbar-right">
+          <div class="topbar-time" id="w-clock"></div>
+          <div class="topbar-badge">WAITER</div>
+        </div>
+      </div>
+      <div id="w-toast" class="toast"></div>
+
+      <!-- TABLES VIEW -->
+      <div id="w-vtables" class="dash-body">
+        <div class="stats-row" id="w-stats-row"></div>
+        <div class="section-hdr"><h3>Table Overview</h3><span style="font-size:12px;color:var(--muted);">Click a table to start an order</span></div>
+        <div class="tgrid" id="w-tgrid"></div>
+        <div id="w-ao-wrap" style="margin-top:32px;display:none;">
+          <div class="section-hdr"><h3>Active Orders</h3></div>
+          <div class="aolist" id="w-aolist"></div>
+        </div>
+      </div>
+
+      <!-- ORDER VIEW -->
+      <div id="w-vorder" class="dash-body" style="display:none;">
+        <div class="section-hdr">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <button class="lg-back" onclick="wTab('tables')" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;">← Back</button>
+            <div><div class="topbar-title">New Order — <span id="w-otname">Table ?</span></div></div>
+          </div>
+        </div>
+        <div class="order-layout">
+          <div>
+            <div class="order-panel">
+              <div class="order-panel-hdr">
+                <span class="order-panel-title">Menu</span>
+              </div>
+              <div class="catbar" id="w-catbar"></div>
+              <div class="olist" id="w-olist"></div>
+            </div>
+          </div>
+          <div class="bpanel">
+            <div class="bpanel-hdr"><span class="bpanel-title">Bill — <span id="w-bill-tname">Table ?</span></span></div>
+            <div class="bpanel-body">
+              <div id="w-billitems"></div>
+              <div id="w-billempty" class="bempty">No items added yet</div>
+              <div id="w-billtots" style="display:none;">
+                <hr class="bdiv">
+                <div class="btot"><span>Subtotal</span><span id="w-sub">₹0</span></div>
+                <div class="btax"><span>+ GST 18%</span><span id="w-gst">₹0</span></div>
+                <div class="btot" style="color:var(--gold);margin-top:6px;"><span>Grand Total</span><span id="w-grand">₹0</span></div>
+                <button class="btn-place" onclick="placeOrder()">Place Order →</button>
+              </div>
+              <button class="lg-back" style="margin-top:20px;display:block;" onclick="wTab('tables')">← Back to Tables</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESERVATIONS VIEW -->
+      <div id="w-vreservations" class="dash-body" style="display:none;">
+        <div class="section-hdr"><h3>Table Reservations</h3></div>
+        <div id="w-reslist"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  KITCHEN LOGIN
+══════════════════════════════════════════════ -->
+<div id="page-kitchen-login" class="page">
+  <div class="lg-root">
+    <div class="lg-bg-glow"></div>
+    <div class="lg-card">
+      <div class="lg-logo-wrap"><div class="lg-logo-icon">👨‍🍳</div><span class="lg-logo-name">URBAN TADKA</span></div>
+      <h2 class="lg-title">Kitchen Portal</h2>
+      <p class="lg-sub">Chef Access — Kitchen Display</p>
+      <div class="lg-div"></div>
+      <div class="lg-field"><label class="lg-label">Username</label><input class="lg-input" type="text" id="ku" placeholder="Enter username" autocomplete="off" spellcheck="false"/></div>
+      <div class="lg-field"><label class="lg-label">Password</label><input class="lg-input" type="password" id="kp" placeholder="Enter password" onkeydown="if(event.key==='Enter')doKitchenLogin()"/></div>
+      <div id="kerr" class="lg-err"></div>
+      <button class="lg-btn" onclick="doKitchenLogin()">Sign In →</button>
+      <p class="lg-hint">Demo: chef / kitchen123</p>
+      <button class="lg-back" onclick="goPublic()">← Back to main site</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  KITCHEN DASHBOARD
+══════════════════════════════════════════════ -->
+<div id="page-kitchen" class="page">
+  <div class="dash">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sb-logo">
+        <div class="sb-logo-icon">👨‍🍳</div>
+        <div class="sb-logo-text">
+          <span class="sb-logo-name">URBAN TADKA</span>
+          <span class="sb-logo-role">Kitchen Portal</span>
+        </div>
+      </div>
+      <nav class="sb-nav">
+        <div class="sb-section">Live Kitchen</div>
+        <button class="sb-item active" onclick="setKFil('all')"><span class="sb-item-icon">🔥</span> All Orders <span class="sb-item-badge" id="k-sb-all">0</span></button>
+        <button class="sb-item" onclick="setKFil('pending')"><span class="sb-item-icon">⏳</span> Pending <span class="sb-item-badge" id="k-sb-pending" style="background:rgba(245,158,11,.3);color:var(--amber);">0</span></button>
+        <button class="sb-item" onclick="setKFil('preparing')"><span class="sb-item-icon">🍳</span> Preparing <span class="sb-item-badge" id="k-sb-prep" style="background:rgba(59,130,246,.3);color:#60a5fa;">0</span></button>
+        <button class="sb-item" onclick="setKFil('ready')"><span class="sb-item-icon">✅</span> Ready <span class="sb-item-badge" id="k-sb-ready" style="background:rgba(34,197,94,.3);color:var(--green);">0</span></button>
+        <div class="sb-section">History</div>
+        <div class="sb-item" style="cursor:default;"><span class="sb-item-icon">📋</span> Completed <span class="sb-item-badge" id="k-sb-done" style="background:rgba(107,114,128,.3);color:#9ca3af;">0</span></div>
+      </nav>
+      <div class="sb-footer">
+        <div class="sb-user">
+          <div class="sb-user-av">C</div>
+          <div><p class="sb-user-name">Chef</p><p class="sb-user-role">Kitchen Access</p></div>
+          <button class="sb-logout" onclick="doLogout()" title="Logout">⎋</button>
+        </div>
+      </div>
+    </aside>
+    <!-- MAIN -->
+    <main class="dash-main">
+      <div class="dash-topbar">
+        <div class="dash-topbar-left">
+          <div>
+            <div class="topbar-title">Kitchen Display System</div>
+            <div class="topbar-subtitle">Live order management · Urban Tadka</div>
+          </div>
+        </div>
+        <div class="dash-topbar-right">
+          <span id="kmeta" style="font-size:12px;color:var(--muted);">0 active</span>
+          <span class="bell" id="kbell">🔔</span>
+          <div class="topbar-time" id="k-clock"></div>
+          <div class="topbar-badge" style="background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.3);color:#f87171;">KITCHEN</div>
+        </div>
+      </div>
+      <div class="dash-body">
+        <div class="k-stat-strip" id="k-stat-strip"></div>
+        <div class="kgrid" id="k-ogrid"></div>
+        <div id="k-csec" style="display:none;margin-top:32px;">
+          <div class="section-hdr"><h3 style="opacity:.5;">Completed Today</h3></div>
+          <div class="clist" id="k-clist"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+// ── CURSOR GLOW ──
+const glowEl=document.getElementById('cur-glow');
+let mx=0,my=0,gx=0,gy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+(function anim(){gx+=(mx-gx)*.09;gy+=(my-gy)*.09;glowEl.style.left=gx+'px';glowEl.style.top=gy+'px';requestAnimationFrame(anim);})();
+document.addEventListener('mousedown',()=>{glowEl.style.width='88px';glowEl.style.height='88px';});
+document.addEventListener('mouseup',()=>{glowEl.style.width='60px';glowEl.style.height='60px';});
+
+// ── CLOCKS ──
+function updateClocks(){
+  const t=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  ['w-clock','k-clock'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=t;});
+}
+setInterval(updateClocks,1000);updateClocks();
+
+// ── MENU DATA ──
+const MENU={
+  "Starters":[
+    {id:1,name:"Galouti Kebab",desc:"Melt-in-mouth minced lamb, kewra, oud smoke",price:480,emoji:"🫕"},
+    {id:2,name:"Burrata Chaat",desc:"Italian burrata, tamarind reduction, pomegranate",price:420,emoji:"🥗"},
+    {id:3,name:"Gilafi Seekh",desc:"Charcoal-grilled chicken, bell pepper mosaic",price:390,emoji:"🍢"},
+    {id:4,name:"Mushroom Tikki",desc:"Wild mushroom patties, truffle aioli, micro herbs",price:350,emoji:"🍄"},
+  ],
+  "Mains":[
+    {id:5,name:"Raan-e-Jadid",desc:"48h slow-braised lamb shoulder, fig jus, saffron rice",price:890,emoji:"🍖"},
+    {id:6,name:"Dal Makhani Noir",desc:"72h slow-cooked black lentils, smoked butter",price:480,emoji:"🫘"},
+    {id:7,name:"Lobster Malai",desc:"Atlantic lobster, coconut cream, coastal spices",price:1480,emoji:"🦞"},
+    {id:8,name:"Paneer Mille-Feuille",desc:"Layered cottage cheese, spinach, cashew sauce",price:520,emoji:"🧀"},
+  ],
+  "Breads & Rice":[
+    {id:9,name:"Truffle Naan",desc:"Hand-stretched, black truffle butter, gold leaf",price:280,emoji:"🫓"},
+    {id:10,name:"Zafrani Pulao",desc:"Kashmiri saffron, rose water, dry fruits",price:320,emoji:"🍚"},
+  ],
+  "Desserts":[
+    {id:11,name:"Gulab Jamun Soufflé",desc:"Warm soufflé, rose ice cream, pistachio dust",price:320,emoji:"🍮"},
+    {id:12,name:"Mango Srikhand",desc:"Hung curd, Alphonso mango, cardamom",price:280,emoji:"🥭"},
+  ],
+};
+const ALL=Object.values(MENU).flat();
+const TABLES=Array.from({length:12},(_,i)=>({id:i+1,seats:i<4?2:i<8?4:6}));
+
+// ── PERSISTENT STATE ──
+let orders=[],reservations=[],cart=[],selTbl=null,wCat="Starters",kFil="all",prevOC=0,staffAuth=false,kitchenAuth=false;
+
+function loadState(){
+  try{orders=JSON.parse(localStorage.getItem('ut_orders')||'[]');}catch(e){orders=[];}
+  try{reservations=JSON.parse(localStorage.getItem('ut_reservations')||'[]');}catch(e){reservations=[];}
+  staffAuth=sessionStorage.getItem('ut_staff')==='1';
+  kitchenAuth=sessionStorage.getItem('ut_kitchen')==='1';
+  prevOC=orders.length;
+}
+function saveOrders(){localStorage.setItem('ut_orders',JSON.stringify(orders));localStorage.setItem('ut_sync',Date.now().toString());}
+function saveReservations(){localStorage.setItem('ut_reservations',JSON.stringify(reservations));}
+window.addEventListener('storage',e=>{
+  if(e.key==='ut_sync'){
+    try{orders=JSON.parse(localStorage.getItem('ut_orders')||'[]');}catch(err){}
+    const ap=document.querySelector('.page.active')?.id||'';
+    if(ap==='page-kitchen'){renderKPanel();}
+    if(ap==='page-waiter'){renderWTables();renderAO();updateWSidebar();}
+  }
+});
+loadState();
+
+// ── ROUTING ──
+const ROUTE_MAP={'#waiter-login':'staff-login','#kitchen-login':'kitchen-login','#waiter':'waiter','#kitchen':'kitchen'};
+function showPage(pid){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const el=document.getElementById('page-'+pid);if(el)el.classList.add('active');window.scrollTo(0,0);}
+function goPublic(){history.replaceState(null,'','#');showPage('public');}
+function handleHash(){
+  const h=window.location.hash||'';
+  if(h==='#waiter'){if(!staffAuth){history.replaceState(null,'','#waiter-login');showPage('staff-login');return;}showPage('waiter');wTab('tables');return;}
+  if(h==='#kitchen'){if(!kitchenAuth){history.replaceState(null,'','#kitchen-login');showPage('kitchen-login');return;}showPage('kitchen');renderKPanel();return;}
+  const pid=ROUTE_MAP[h];
+  if(pid)showPage(pid);else showPage('public');
+  ['serr','kerr'].forEach(id=>{const e=document.getElementById(id);if(e){e.style.display='none';e.textContent='';}});
+}
+window.addEventListener('hashchange',handleHash);
+handleHash();
+
+// ── NAV SCROLL ──
+window.addEventListener('scroll',()=>{const n=document.getElementById('pub-nav');if(n)n.classList.toggle('scrolled',window.scrollY>60);},{passive:true});
+function ss(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'});}
+
+// ── PUBLIC MENU ──
+function renderPubMenu(f='All'){
+  const items=f==='All'?ALL:(MENU[f]||[]);
+  const g=document.getElementById('pub-mgrid');if(!g)return;
+  g.innerHTML=items.map(it=>`<div class="mc"><span class="me">${it.emoji}</span><div style="flex:1"><div class="mct"><span class="mn">${it.name}</span><span class="mp">₹${it.price}</span></div><p class="md">${it.desc}</p></div></div>`).join('');
+}
+function renderPubFilters(){
+  const b=document.getElementById('pub-mfb');if(!b)return;
+  b.innerHTML=['All',...Object.keys(MENU)].map(c=>`<button class="fb ${c==='All'?'active':''}" onclick="pubFilter('${c}',this)">${c}</button>`).join('');
+}
+function pubFilter(c,btn){document.querySelectorAll('#pub-mfb .fb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderPubMenu(c);}
+renderPubFilters();renderPubMenu();
+
+// ── BOOKING ──
+function submitBooking(){
+  const name=(document.getElementById('b-name')||{}).value?.trim();
+  const phone=(document.getElementById('b-phone')||{}).value?.trim();
+  const date=(document.getElementById('b-date')||{}).value;
+  const time=(document.getElementById('b-time')||{}).value;
+  const guests=(document.getElementById('b-guests')||{}).value;
+  if(!name||!phone||!date||!time){alert('Please fill in all fields.');return;}
+  const bid='UT-'+Math.random().toString(36).slice(2,7).toUpperCase();
+  reservations.push({id:bid,name,phone,date,time,guests,createdAt:new Date().toISOString(),status:'confirmed'});
+  saveReservations();
+  const c=document.getElementById('book-container');
+  if(c)c.innerHTML=`<div class="bsuccess"><div style="font-size:56px">🎉</div><h3>Reservation Confirmed!</h3><p>Booking ID: <strong style="color:var(--gold);font-family:monospace">${bid}</strong></p><p style="margin-top:8px;color:var(--muted);">We'll reach out at <strong style="color:var(--gold)">${phone}</strong></p><p style="color:var(--dim);font-size:13px;margin-top:6px;">${name} · ${guests} · ${date} · ${time}</p><button class="btn-gold" style="margin-top:16px;" onclick="location.reload()">Make Another Booking</button></div>`;
+}
+
+// ── LOGIN ──
+function doStaffLogin(){
+  const u=document.getElementById('su').value.trim(),p=document.getElementById('sp').value,err=document.getElementById('serr');
+  if(!u||!p){err.textContent='Please enter username and password.';err.style.display='block';return;}
+  if(u==='waiter'&&p==='tadka123'){staffAuth=true;sessionStorage.setItem('ut_staff','1');err.style.display='none';document.getElementById('su').value='';document.getElementById('sp').value='';selTbl=null;cart=[];window.location.hash='#waiter';}
+  else{err.textContent='Wrong credentials. Try: waiter / tadka123';err.style.display='block';document.getElementById('sp').value='';document.getElementById('sp').focus();}
+}
+function doKitchenLogin(){
+  const u=document.getElementById('ku').value.trim(),p=document.getElementById('kp').value,err=document.getElementById('kerr');
+  if(!u||!p){err.textContent='Please enter username and password.';err.style.display='block';return;}
+  if(u==='chef'&&p==='kitchen123'){kitchenAuth=true;sessionStorage.setItem('ut_kitchen','1');err.style.display='none';document.getElementById('ku').value='';document.getElementById('kp').value='';window.location.hash='#kitchen';}
+  else{err.textContent='Wrong credentials. Try: chef / kitchen123';err.style.display='block';document.getElementById('kp').value='';document.getElementById('kp').focus();}
+}
+function doLogout(){staffAuth=false;kitchenAuth=false;sessionStorage.removeItem('ut_staff');sessionStorage.removeItem('ut_kitchen');goPublic();}
+
+// ── WAITER ──
+function wTab(tab){
+  const vt=document.getElementById('w-vtables'),vo=document.getElementById('w-vorder'),vr=document.getElementById('w-vreservations');
+  const s1=document.getElementById('sw-tables'),s2=document.getElementById('sw-order'),s3=document.getElementById('sw-reservations');
+  [vt,vo,vr].forEach(el=>{if(el)el.style.display='none';});
+  [s1,s2,s3].forEach(el=>{if(el)el.classList.remove('active');});
+  const titles={tables:'Floor View',order:`New Order`,reservations:'Reservations'};
+  const subs={tables:'Click any table to start an order',order:`Active table order`,reservations:'All booking requests'};
+  document.getElementById('w-topbar-title').textContent=titles[tab]||'Dashboard';
+  document.getElementById('w-topbar-sub').textContent=subs[tab]||'';
+  if(tab==='order'&&selTbl){vo.style.display='block';s2&&s2.classList.add('active');document.getElementById('w-otname').textContent=`Table ${selTbl}`;document.getElementById('w-bill-tname').textContent=`Table ${selTbl}`;renderWCats();renderWItems();renderBill();}
+  else if(tab==='reservations'){vr.style.display='block';s3&&s3.classList.add('active');renderReservations();}
+  else{vt.style.display='block';s1&&s1.classList.add('active');renderWTables();renderAO();renderWStats();}
+}
+function renderWStats(){
+  const el=document.getElementById('w-stats-row');if(!el)return;
+  const active=orders.filter(o=>o.status!=='completed');
+  const done=orders.filter(o=>o.status==='completed');
+  const rev=done.reduce((s,o)=>s+o.total,0);
+  const occupied=new Set(active.map(o=>o.tableId)).size;
+  el.innerHTML=`
+    <div class="stat-card"><div class="stat-card-label">Active Orders</div><div class="stat-card-value gold">${active.length}</div><div class="stat-card-sub"><span class="stat-card-dot" style="background:var(--amber)"></span>In progress</div></div>
+    <div class="stat-card"><div class="stat-card-label">Tables Occupied</div><div class="stat-card-value">${occupied}<span style="font-size:16px;color:var(--muted)"> / 12</span></div><div class="stat-card-sub"><span class="stat-card-dot" style="background:var(--green)"></span>${12-occupied} available</div></div>
+    <div class="stat-card"><div class="stat-card-label">Today's Revenue</div><div class="stat-card-value gold">₹${rev.toLocaleString('en-IN')}</div><div class="stat-card-sub">${done.length} orders completed</div></div>
+    <div class="stat-card"><div class="stat-card-label">Reservations</div><div class="stat-card-value">${reservations.length}</div><div class="stat-card-sub">Total bookings</div></div>
+  `;
+}
+function updateWSidebar(){
+  const active=orders.filter(o=>o.status!=='completed').length;
+  const badge=document.getElementById('w-sb-badge');
+  if(badge)badge.textContent=active;
+}
+function renderWTables(){
+  const g=document.getElementById('w-tgrid');if(!g)return;
+  g.innerHTML=TABLES.map(t=>{
+    const act=orders.filter(o=>o.tableId===t.id&&o.status!=='completed');
+    return`<div class="tcard ${selTbl===t.id?'sel':''} ${act.length?'occ':''}" onclick="selTable(${t.id})"><div class="tnum">T${t.id}</div><div class="tseat">${t.seats} seats</div><div class="tst ${act.length?'tact':'tfree'}">${act.length?'🟡 Active':'Available'}</div></div>`;
+  }).join('');
+  updateWSidebar();
+}
+function selTable(id){
+  selTbl=id;cart=[];
+  const s2=document.getElementById('sw-order');
+  if(s2){s2.style.opacity='1';s2.innerHTML=`<span class="sb-item-icon">📝</span> Table ${id}`;}
+  wTab('order');
+}
+function renderAO(){
+  const sec=document.getElementById('w-ao-wrap'),list=document.getElementById('w-aolist');if(!sec||!list)return;
+  const act=orders.filter(o=>o.status!=='completed');
+  if(!act.length){sec.style.display='none';return;}
+  sec.style.display='block';
+  const borderMap={pending:'border-amber',preparing:'border-blue',ready:'border-green'};
+  list.innerHTML=act.map(o=>`<div class="aocard ${borderMap[o.status]||''}"><div class="aohdr"><span class="aot">${o.tableName}</span><span class="stbg s-${o.status}">${o.status.toUpperCase()}</span></div>${o.items.map(it=>`<div class="aoitem"><span>${it.qty}× ${it.name}</span><span style="color:var(--muted)">₹${it.price*it.qty}</span></div>`).join('')}<div class="aototl">Total: ₹${o.total}</div></div>`).join('');
+}
+function renderReservations(){
+  const el=document.getElementById('w-reslist');if(!el)return;
+  if(!reservations.length){el.innerHTML=`<div style="text-align:center;padding:60px;color:var(--muted)">No reservations yet.</div>`;return;}
+  const sorted=[...reservations].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
+  el.innerHTML=`<div class="res-grid">${sorted.map(r=>`<div class="res-card"><div class="res-id">${r.id}</div><div class="res-name">${r.name}</div><div class="res-meta">📅 ${r.date} &nbsp; 🕐 ${r.time}</div><div class="res-meta">👥 ${r.guests} &nbsp; 📞 ${r.phone}</div><div style="font-size:11px;color:var(--dim);margin-top:8px;">Booked ${new Date(r.createdAt).toLocaleString()}</div></div>`).join('')}</div>`;
+}
+function renderWCats(){
+  const b=document.getElementById('w-catbar');if(!b)return;
+  b.innerHTML=Object.keys(MENU).map(c=>`<button class="fb ${c===wCat?'active':''}" onclick="setWCat('${c}',this)">${c}</button>`).join('');
+}
+function setWCat(c,btn){wCat=c;document.querySelectorAll('#w-catbar .fb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderWItems();}
+function renderWItems(){
+  const l=document.getElementById('w-olist');if(!l)return;
+  l.innerHTML=(MENU[wCat]||[]).map(it=>{
+    const ic=cart.find(i=>i.id===it.id);
+    return`<div class="oi"><span class="oi-emoji">${it.emoji}</span><div style="flex:1"><div class="oin">${it.name}</div><div class="oid">${it.desc}</div></div><span class="oprx">₹${it.price}</span>${ic?`<div class="qc"><button class="qb" onclick="rmCart(${it.id})">−</button><span class="qn">${ic.qty}</span><button class="qb" onclick="addCart(${it.id})">+</button></div>`:`<button class="addbtn" onclick="addCart(${it.id})">+ Add</button>`}</div>`;
+  }).join('');
+}
+function addCart(id){const it=ALL.find(i=>i.id===id);if(!it)return;const ex=cart.find(i=>i.id===id);if(ex)ex.qty++;else cart.push({...it,qty:1});renderWItems();renderBill();}
+function rmCart(id){const ex=cart.find(i=>i.id===id);if(ex){ex.qty--;if(ex.qty<=0)cart=cart.filter(i=>i.id!==id);}renderWItems();renderBill();}
+function renderBill(){
+  const li=document.getElementById('w-billitems'),em=document.getElementById('w-billempty'),tot=document.getElementById('w-billtots');if(!li)return;
+  if(!cart.length){em.style.display='block';tot.style.display='none';li.innerHTML='';return;}
+  em.style.display='none';tot.style.display='block';
+  li.innerHTML=cart.map(i=>`<div class="birow"><span>${i.qty}× ${i.name}</span><span>₹${i.price*i.qty}</span></div>`).join('');
+  const sub=cart.reduce((s,i)=>s+i.price*i.qty,0),gst=Math.round(sub*.18);
+  document.getElementById('w-sub').textContent=`₹${sub}`;
+  document.getElementById('w-gst').textContent=`₹${gst}`;
+  document.getElementById('w-grand').textContent=`₹${sub+gst}`;
+}
+function placeOrder(){
+  if(!cart.length||!selTbl)return;
+  const sub=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  orders.push({id:Date.now(),tableId:selTbl,tableName:`Table ${selTbl}`,items:cart.map(i=>({...i,iStat:'pending'})),status:'pending',time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),total:sub,isNew:true});
+  cart=[];saveOrders();
+  showWToast(`✓ Order placed for Table ${selTbl}!`);
+  wTab('tables');
+  if(document.getElementById('page-kitchen').classList.contains('active'))renderKPanel();
+}
+function showWToast(msg){const t=document.getElementById('w-toast');if(!t)return;t.innerHTML=`<span>✓</span> ${msg}`;t.style.display='flex';setTimeout(()=>{t.style.display='none';},3000);}
+
+// ── KITCHEN ──
+const SC={pending:'#f59e0b',preparing:'#3b82f6',ready:'#22c55e',completed:'#6b7280'};
+function renderKPanel(){
+  const act=orders.filter(o=>o.status!=='completed'),done=orders.filter(o=>o.status==='completed');
+  const m=document.getElementById('kmeta');if(m)m.textContent=`${act.length} active · ${done.length} done`;
+  if(orders.length>prevOC){prevOC=orders.length;ringBell();}
+  // sidebar badges
+  const allCnt=orders.filter(o=>o.status!=='completed').length;
+  const badge=s=>orders.filter(o=>o.status===s).length;
+  ['all','pending','preparing','ready'].forEach(s=>{const el=document.getElementById(`k-sb-${s==='all'?'all':s==='pending'?'pending':s==='preparing'?'prep':'ready'}`);if(el)el.textContent=s==='all'?allCnt:badge(s);});
+  const db=document.getElementById('k-sb-done');if(db)db.textContent=done.length;
+  // stats strip
+  const strip=document.getElementById('k-stat-strip');
+  if(strip)strip.innerHTML=`
+    <div class="k-stat"><span class="k-stat-icon">⏳</span><div><div class="k-stat-val" style="color:var(--amber)">${badge('pending')}</div><div class="k-stat-label">Pending</div></div></div>
+    <div class="k-stat"><span class="k-stat-icon">🍳</span><div><div class="k-stat-val" style="color:#60a5fa">${badge('preparing')}</div><div class="k-stat-label">Preparing</div></div></div>
+    <div class="k-stat"><span class="k-stat-icon">✅</span><div><div class="k-stat-val" style="color:var(--green)">${badge('ready')}</div><div class="k-stat-label">Ready to Serve</div></div></div>
+  `;
+  // update sidebar active state
+  document.querySelectorAll('#page-kitchen .sb-item').forEach(b=>b.classList.remove('active'));
+  const activeBtn=document.querySelector(`#page-kitchen .sb-item[onclick="setKFil('${kFil}')"]`);
+  if(activeBtn)activeBtn.classList.add('active');
+  renderKOrders();
+  // completed
+  const cs=document.getElementById('k-csec'),cl=document.getElementById('k-clist');
+  if(cs&&cl){if(!done.length){cs.style.display='none';return;}cs.style.display='block';cl.innerHTML=[...done].slice(-5).reverse().map(o=>`<div class="ci"><span style="color:var(--green)">✓</span><span>${o.tableName}</span><span style="color:var(--dim)">${o.time}</span><span style="flex:1">${o.items.map(i=>`${i.qty}× ${i.name}`).join(', ')}</span><span style="color:var(--gold)">₹${o.total}</span></div>`).join('');}
+}
+function setKFil(f){kFil=f;renderKPanel();}
+function renderKOrders(){
+  const g=document.getElementById('k-ogrid');if(!g)return;
+  let list=orders.filter(o=>o.status!=='completed');
+  if(kFil!=='all')list=list.filter(o=>o.status===kFil);
+  if(!list.length){g.innerHTML=`<div class="kempty"><div style="font-size:60px">👨‍🍳</div><p>Kitchen is clear. No active orders.</p></div>`;return;}
+  g.innerHTML=list.map(order=>{
+    const col=SC[order.status]||'#f59e0b';
+    const isNew=order.isNew?'new-order':'';
+    return`<div class="kcard ${isNew}" style="border-top-color:${col}">
+      <div class="kchdr"><div><span class="ktbl">${order.tableName}</span><span class="ktim">${order.time}</span></div><span class="kbadge" style="background:${col}20;color:${col}">${order.status.toUpperCase()}</span></div>
+      <div class="kitems">${order.items.map((it,idx)=>{const ic=SC[it.iStat||'pending']||'#f59e0b';return`<div class="kitem"><div class="kil"><span style="font-size:22px">${it.emoji}</span><div><div class="kin">${it.qty}× ${it.name}</div><span class="kibadge" style="background:${ic}20;color:${ic}">${(it.iStat||'pending').toUpperCase()}</span></div></div><div style="display:flex;gap:5px"><button class="sbtn sbp" onclick="setIS('${order.id}',${idx},'preparing')">Prep</button><button class="sbtn sbr" onclick="setIS('${order.id}',${idx},'ready')">Done</button><button class="sbtn sbd" onclick="rmKItem('${order.id}',${idx})">✕</button></div></div>`;}).join('')}</div>
+      <div class="kacts"><button class="kbtn kbp" onclick="setOS('${order.id}','preparing')">▶ Preparing</button><button class="kbtn kbr" onclick="setOS('${order.id}','ready')">✓ Ready</button><button class="kbtn kbd" onclick="setOS('${order.id}','completed')">✔✔ Complete</button></div>
+    </div>`;
+  }).join('');
+}
+function setOS(id,st){const o=orders.find(o=>o.id==id);if(o){o.status=st;o.isNew=false;}saveOrders();renderKPanel();if(document.getElementById('page-waiter').classList.contains('active')){renderAO();renderWTables();renderWStats();}}
+function setIS(oid,idx,st){const o=orders.find(o=>o.id==oid);if(o&&o.items[idx])o.items[idx].iStat=st;saveOrders();renderKPanel();}
+function rmKItem(oid,idx){const o=orders.find(o=>o.id==oid);if(o){o.items.splice(idx,1);if(!o.items.length)o.status='completed';}saveOrders();renderKPanel();}
+function ringBell(){
+  const b=document.getElementById('kbell');
+  if(b){b.classList.remove('ringing');void b.offsetWidth;b.classList.add('ringing');setTimeout(()=>b.classList.remove('ringing'),700);}
+  try{const ctx=new(window.AudioContext||window.webkitAudioContext)();[0,.14,.28].forEach((t,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.setValueAtTime(900-i*70,ctx.currentTime+t);o.frequency.exponentialRampToValueAtTime(450-i*40,ctx.currentTime+t+.28);g.gain.setValueAtTime(.3,ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+t+.45);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+.45);});}catch(e){}
+}
+// Auto-refresh kitchen every 3s
+setInterval(()=>{if(document.getElementById('page-kitchen').classList.contains('active'))renderKPanel();},3000);
+</script>
+</body>
+</html>
