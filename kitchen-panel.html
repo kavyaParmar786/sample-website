@@ -442,3 +442,30 @@ document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); })
 </script>
 </body>
 </html>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyArAt528E_6z2B0BpI7qtDqKGkHbpw1Ygk",
+    authDomain: "urban-tadka-system.firebaseapp.com",
+    databaseURL: "https://urban-tadka-system-default-rtdb.firebaseio.com",
+    projectId: "urban-tadka-system",
+    storageBucket: "urban-tadka-system.firebasestorage.app",
+    messagingSenderId: "155835416523",
+    appId: "1:155835416523:web:d773292554d322531a004e"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Make db global
+  window.db = db;
+  window.ref = ref;
+  window.push = push;
+  window.onValue = onValue;
+</script>
